@@ -1,0 +1,12 @@
+return {
+	"ellisonleao/gruvbox.nvim",
+	priority = 1000,
+	lazy = false,
+	config = function()
+		vim.cmd([[colorscheme gruvbox]])
+
+		local palette = require("catppuccin.palettes").get_palette("mocha")
+    vim.api.nvim_set_hl(0, "Normal",      { bg = palette.base })
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = palette.base })
+	end,
+}

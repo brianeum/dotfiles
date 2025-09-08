@@ -1,0 +1,53 @@
+vim.opt.number = true
+vim.opt.tabstop = 4        -- 탭 문자가 차지하는 칸 수
+vim.opt.shiftwidth = 4     -- 자동 들여쓰기 시 사용하는 칸 수
+vim.cmd("colorscheme sorbet")
+
+-- 플러그인 관리 (vim-plug 사용)
+vim.cmd [[
+call plug#begin('~/.local/share/nvim/plugged')
+
+" LSP 지원
+Plug 'neovim/nvim-lspconfig'
+
+" 자동완성 플러그인
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'windwp/nvim-autopairs'
+
+call plug#end()
+]]
+
+-- LSP 설정
+local lspconfig = require'lspconfig'
+
+-- clangd 설정 (C, C++, CUDA 지원)
+lspconfig.clangd.setup {
+  cmd = {"clangd", "--background-index", "--clang-tidy", "--header-insertion=never"},
+  filetypes = {"c", "cpp", "cuda"},
+  root_dir = lspconfig.util.root_pattern("compile_commands.json", ".git")
+}
+
+-- 자동완성 설정
+local cmp = require'cmp'
+
+cmp.setup {
+  mapping = {
+    ['<Down>'] = cmp.mapping.select_next_item(),  -- 아래 화살표로 다음 항목 선택
+    ['<Up>'] = cmp.mapping.select_prev_item(),    -- 위 화살표로 이전 항목 선택
+	['<Tab>'] = cmp.mapping.select_next_item(),
+	['<S-Tab>'] = cmp.mapping.select_prev_item(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),  -- Enter로 선택
+  },
+  sources = {
+    { name = 'nvim_lsp' },  -- LSP 자동완성
+    { name = 'buffer' },    -- 현재 버퍼 내용 자동완성
+    { name = 'path' },      -- 파일 경로 자동완성
+  }
+}
+
+-- 괄호 자동완성 설정
+require("nvim-autopairs").setup({})
+
